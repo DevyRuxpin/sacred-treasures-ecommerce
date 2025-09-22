@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
+import { useState, useEffect, Suspense, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import { ProductCard } from "@/components/ui/product-card"
 import { Button } from "@/components/ui/button"
@@ -48,7 +48,7 @@ function ProductsContent() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams()
@@ -76,7 +76,7 @@ function ProductsContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters, pagination.page, pagination.limit, sortBy, sortOrder])
 
   useEffect(() => {
     fetchProducts()
@@ -91,23 +91,16 @@ function ProductsContent() {
     setPagination(prev => ({ ...prev, page }))
   }
 
-  const _handleSortChange = (newSortBy: string) => {
-    if (sortBy === newSortBy) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-    } else {
-      setSortBy(newSortBy)
-      setSortOrder("desc")
-    }
-  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col lg:flex-row gap-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters Sidebar */}
         <div className="lg:w-64 flex-shrink-0">
-          <Card>
+          <Card className="sticky top-8">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Filter className="h-5 w-5" />
                 Filters
               </CardTitle>
@@ -174,13 +167,14 @@ function ProductsContent() {
         {/* Products Grid */}
         <div className="flex-1">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-              <h1 className="text-2xl font-bold">Products</h1>
-              <p className="text-muted-foreground">
-                Showing {products.length} of {pagination.total} products
-              </p>
-            </div>
+          <div className="bg-white rounded-lg p-6 mb-6 shadow-sm border">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+                <p className="text-gray-600 mt-1">
+                  Showing {products.length} of {pagination.total} products
+                </p>
+              </div>
 
             <div className="flex items-center gap-4">
               {/* Sort */}
@@ -193,7 +187,7 @@ function ProductsContent() {
                     setSortBy(newSortBy)
                     setSortOrder(newSortOrder as "asc" | "desc")
                   }}
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border border-input bg-background rounded-md px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <option value="createdAt-desc">Newest</option>
                   <option value="createdAt-asc">Oldest</option>
@@ -205,7 +199,7 @@ function ProductsContent() {
               </div>
 
               {/* View Mode */}
-              <div className="flex items-center gap-1 border rounded">
+              <div className="flex items-center gap-1 border border-input rounded-md overflow-hidden">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
@@ -221,6 +215,7 @@ function ProductsContent() {
                   <List className="h-4 w-4" />
                 </Button>
               </div>
+            </div>
             </div>
           </div>
 
@@ -248,15 +243,28 @@ function ProductsContent() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">No products found</p>
-              <p className="text-muted-foreground">Try adjusting your filters</p>
+            <div className="bg-white rounded-lg p-12 text-center shadow-sm border">
+              <div className="max-w-md mx-auto">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Search className="h-8 w-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
+                <p className="text-gray-600 mb-4">Try adjusting your search or filter criteria</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setFilters({})}
+                  className="mt-4"
+                >
+                  Clear all filters
+                </Button>
+              </div>
             </div>
           )}
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-8">
+            <div className="bg-white rounded-lg p-6 mt-8 shadow-sm border">
+              <div className="flex justify-center items-center gap-2">
               <Button
                 variant="outline"
                 onClick={() => handlePageChange(pagination.page - 1)}
@@ -288,10 +296,12 @@ function ProductsContent() {
               >
                 Next
               </Button>
+              </div>
             </div>
           )}
         </div>
       </div>
+    </div>
     </div>
   )
 }

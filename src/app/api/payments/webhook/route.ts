@@ -90,24 +90,24 @@ export async function POST(request: NextRequest) {
           })
         }
 
-        console.log(`Order created: ${order.orderNumber}`)
+        // Order created successfully
         break
       }
 
       case "payment_intent.payment_failed": {
         const paymentIntent = event.data.object
-        console.log(`Payment failed: ${paymentIntent.id}`)
+        // Payment failed
         break
       }
 
       case "payment_intent.succeeded": {
         const paymentIntent = event.data.object
-        console.log(`Payment succeeded: ${paymentIntent.id}`)
+        // Payment succeeded
         break
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
+        // Unhandled event type
     }
 
     return NextResponse.json({ received: true })

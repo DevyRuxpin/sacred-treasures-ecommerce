@@ -134,7 +134,7 @@ export default function AdminSuppliers() {
   const handleSyncInventory = async (supplierId: string) => {
     try {
       // In a real implementation, you would call the sync API
-      console.log("Syncing inventory for supplier:", supplierId)
+      // Syncing inventory for supplier
       // Show success message
     } catch (error) {
       console.error("Error syncing inventory:", error)

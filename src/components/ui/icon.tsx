@@ -14,11 +14,24 @@ export function Icon({ children, className }: IconProps) {
     setIsClient(true)
   }, [])
 
+  // Only render icons on client side to avoid hydration mismatches
+  if (!isClient) {
+    return (
+      <span 
+        className={className} 
+        suppressHydrationWarning
+        data-icon-wrapper="server"
+      >
+        {/* Placeholder for SSR */}
+      </span>
+    )
+  }
+
   return (
     <span 
       className={className} 
       suppressHydrationWarning
-      data-icon-wrapper={isClient ? 'client' : 'server'}
+      data-icon-wrapper="client"
     >
       {children}
     </span>

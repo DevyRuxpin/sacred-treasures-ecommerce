@@ -16,7 +16,7 @@ interface Product {
   slug: string
   price: number
   comparePrice?: number
-  images: string
+  images: string[]
   isFeatured: boolean
   description?: string
   tags: string
@@ -31,7 +31,7 @@ interface Category {
   parentId?: string
   children: Category[]
   products: Product[]
-  _count: {
+  _count?: {
     products: number
   }
 }
@@ -142,7 +142,7 @@ export default function CategoryPage() {
             </p>
             <Badge variant="secondary" className="mb-4">
               <Package className="h-3 w-3 mr-1" />
-              {category._count.products} products
+              {category._count?.products || 0} products
             </Badge>
           </div>
           
@@ -170,7 +170,7 @@ export default function CategoryPage() {
                   <CardContent className="p-4 text-center">
                     <h3 className="font-medium text-sm">{child.name}</h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {child._count.products} products
+                      {child._count?.products || 0} products
                     </p>
                   </CardContent>
                 </Card>

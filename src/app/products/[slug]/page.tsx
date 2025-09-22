@@ -96,7 +96,7 @@ export default function ProductPage() {
         productId: product.id,
         variantId: selectedVariant || undefined,
         quantity,
-        price: finalPrice,
+        price: Number(finalPrice),
         name: product.name,
         image: product.images[0],
         variant: variant ? `${variant.name}: ${variant.value}` : undefined,
@@ -149,12 +149,12 @@ export default function ProductPage() {
   }
 
   const discountPercentage = product.comparePrice
-    ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
+    ? Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)
     : 0
 
   const finalPrice = selectedVariant 
-    ? product.variants.find(v => v.id === selectedVariant)?.price || product.price
-    : product.price
+    ? Number(product.variants.find(v => v.id === selectedVariant)?.price || product.price)
+    : Number(product.price)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -167,6 +167,10 @@ export default function ProductPage() {
               alt={product.name}
               fill
               className="object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "https://via.placeholder.com/800x600/cccccc/666666?text=Image+Not+Available";
+              }}
             />
             {discountPercentage > 0 && (
               <Badge className="absolute top-4 left-4 bg-destructive text-destructive-foreground">
@@ -190,6 +194,10 @@ export default function ProductPage() {
                     alt={`${product.name} ${index + 1}`}
                     fill
                     className="object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://via.placeholder.com/200x200/cccccc/666666?text=Image+Not+Available";
+                    }}
                   />
                 </button>
               ))}
@@ -235,11 +243,11 @@ export default function ProductPage() {
           {/* Price */}
           <div className="flex items-center gap-3">
             <span className="text-3xl font-bold text-primary">
-              ${finalPrice.toFixed(2)}
+              ${Number(finalPrice).toFixed(2)}
             </span>
             {product.comparePrice && (
               <span className="text-xl text-muted-foreground line-through">
-                ${product.comparePrice.toFixed(2)}
+                ${Number(product.comparePrice).toFixed(2)}
               </span>
             )}
           </div>
@@ -383,7 +391,7 @@ export default function ProductPage() {
                 <span className="text-muted-foreground">Stock</span>
                 <span className="font-medium">{product.quantity}</span>
               </div>
-              {product.tags.length > 0 && (
+              {product.tags && Array.isArray(product.tags) && product.tags.length > 0 && (
                 <div>
                   <span className="text-muted-foreground block mb-2">Tags</span>
                   <div className="flex flex-wrap gap-1">

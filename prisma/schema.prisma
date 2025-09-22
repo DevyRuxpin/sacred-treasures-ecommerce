@@ -93,8 +93,8 @@ model Product {
   quantity        Int           @default(0)
   weight          Decimal?
   dimensions      Json?         // {length, width, height}
-  images          String
-  tags            String
+  images          Json
+  tags            Json
   isActive        Boolean       @default(true)
   isFeatured      Boolean       @default(false)
   isDigital       Boolean       @default(false)

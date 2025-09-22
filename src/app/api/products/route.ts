@@ -53,17 +53,14 @@ export async function GET(request: NextRequest) {
     }
 
     if (filters.tags && filters.tags.length > 0) {
-      where.tags = {
-        contains: filters.tags.join(','),
-        mode: 'insensitive'
-      }
+      // For now, skip tags filtering to avoid JSON field issues
+      // TODO: Implement proper JSON array filtering for SQLite
     }
 
     if (filters.search) {
       where.OR = [
-        { name: { contains: filters.search, mode: "insensitive" } },
-        { description: { contains: filters.search, mode: "insensitive" } },
-        { tags: { contains: filters.search, mode: "insensitive" } },
+        { name: { contains: filters.search } },
+        { description: { contains: filters.search } },
       ]
     }
 
@@ -109,6 +106,9 @@ export async function GET(request: NextRequest) {
 
       return {
         ...product,
+        images: typeof product.images === 'string' ? JSON.parse(product.images) : product.images,
+        tags: typeof product.tags === 'string' ? JSON.parse(product.tags) : product.tags,
+        dimensions: product.dimensions ? (typeof product.dimensions === 'string' ? JSON.parse(product.dimensions) : product.dimensions) : null,
         averageRating: Math.round(avgRating * 10) / 10,
         reviewCount: product._count.reviews,
         reviews: undefined,

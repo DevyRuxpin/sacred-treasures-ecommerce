@@ -178,7 +178,7 @@ export default function AdminDropshippingOrders() {
 
   const handleRefreshStatus = async (recordId: string) => {
     // In a real implementation, you would call the supplier's API to get updated status
-    console.log("Refreshing status for record:", recordId)
+    // Refreshing status for record
   }
 
   if (loading) {

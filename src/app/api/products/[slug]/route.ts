@@ -50,6 +50,9 @@ export async function GET(
 
     const productWithRating = {
       ...product,
+      images: typeof product.images === 'string' ? JSON.parse(product.images) : product.images,
+      tags: typeof product.tags === 'string' ? JSON.parse(product.tags) : product.tags,
+      dimensions: product.dimensions ? (typeof product.dimensions === 'string' ? JSON.parse(product.dimensions) : product.dimensions) : null,
       averageRating: Math.round(averageRating * 10) / 10,
       reviewCount: product._count.reviews,
       _count: undefined,

@@ -37,7 +37,7 @@ export function ProductCard({ product }: ProductCardProps) {
       addItem({
         productId: product.id,
         quantity: 1,
-        price: product.price,
+        price: Number(product.price),
         name: product.name,
         image: product.images[0],
       })
@@ -60,6 +60,10 @@ export function ProductCard({ product }: ProductCardProps) {
               alt={product.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "https://via.placeholder.com/800x600/cccccc/666666?text=Image+Not+Available";
+              }}
             />
             
             {/* Overlay with actions - only show on hover */}
@@ -110,7 +114,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardHeader className="pb-3 flex-shrink-0">
         {/* Category */}
         {product.category && (
-          <div className="text-xs font-medium text-primary uppercase tracking-wide mb-1">
+          <div className="text-xs font-medium text-primary uppercase tracking-wide mb-2">
             {product.category.name}
           </div>
         )}
@@ -148,11 +152,11 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Price */}
         <div className="flex items-center space-x-2 mb-4">
           <span className="text-xl font-bold text-gradient">
-            ${product.price.toFixed(2)}
+            ${Number(product.price).toFixed(2)}
           </span>
           {product.comparePrice && (
             <span className="text-sm text-muted-foreground line-through">
-              ${product.comparePrice.toFixed(2)}
+              ${Number(product.comparePrice).toFixed(2)}
             </span>
           )}
         </div>
