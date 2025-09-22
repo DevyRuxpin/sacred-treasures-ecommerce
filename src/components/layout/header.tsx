@@ -1,16 +1,20 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
 import { ShoppingCart, User, Menu, Heart, Sparkles } from "lucide-react"
 import { useCartStore } from "@/store/cart"
 import { AdvancedSearch } from "@/components/search/advanced-search"
+import { CartSidebar } from "@/components/cart/cart-sidebar"
 
 export function Header() {
   const getTotalItems = useCartStore((state) => state.getTotalItems)
+  const [isCartOpen, setIsCartOpen] = useState(false)
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
@@ -71,17 +75,20 @@ export function Header() {
                 <User className="h-4 w-4" />
               </Icon>
             </Button>
-            <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 hover:text-primary transition-colors duration-200" asChild>
-              <Link href="/cart">
-                <Icon>
-                  <ShoppingCart className="h-4 w-4" />
-                </Icon>
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full gradient-primary text-primary-foreground text-xs flex items-center justify-center font-bold">
-                    {getTotalItems()}
-                  </span>
-                )}
-              </Link>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative hover:bg-primary/10 hover:text-primary transition-colors duration-200"
+              onClick={() => setIsCartOpen(true)}
+            >
+              <Icon>
+                <ShoppingCart className="h-4 w-4" />
+              </Icon>
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full gradient-primary text-primary-foreground text-xs flex items-center justify-center font-bold">
+                  {getTotalItems()}
+                </span>
+              )}
             </Button>
             <Button variant="ghost" size="icon" className="lg:hidden hover:bg-primary/10 hover:text-primary transition-colors duration-200">
               <Icon>
@@ -97,5 +104,8 @@ export function Header() {
         </div>
       </div>
     </header>
+    
+    <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
   )
 }

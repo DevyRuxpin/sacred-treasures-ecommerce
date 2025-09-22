@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { CartItem } from '@/types'
+import { useToastStore } from '@/components/ui/toast'
 
 interface CartStore {
   items: CartItem[]
@@ -31,15 +32,35 @@ export const useCartStore = create<CartStore>()(
                 : i
             ),
           })
+          // Show toast for quantity update
+          useToastStore.getState().success(
+            "Item quantity updated",
+            `${item.name} quantity increased to ${existingItem.quantity + item.quantity}`
+          )
         } else {
           set({
             items: [...items, { ...item, id: crypto.randomUUID() }],
           })
+          // Show toast for new item
+          useToastStore.getState().success(
+            "Added to cart",
+            `${item.name} has been added to your cart`
+          )
         }
       },
       
       removeItem: (id) => {
-        set({ items: get().items.filter((item) => item.id !== id) })
+        const items = get().items
+        const itemToRemove = items.find(item => item.id === id)
+        set({ items: items.filter((item) => item.id !== id) })
+        
+        // Show toast for item removal
+        if (itemToRemove) {
+          useToastStore.getState().warning(
+            "Item removed",
+            `${itemToRemove.name} has been removed from your cart`
+          )
+        }
       },
       
       updateQuantity: (id, quantity) => {
@@ -56,7 +77,16 @@ export const useCartStore = create<CartStore>()(
       },
       
       clearCart: () => {
+        const itemCount = get().items.length
         set({ items: [] })
+        
+        // Show toast for cart clearing
+        if (itemCount > 0) {
+          useToastStore.getState().info(
+            "Cart cleared",
+            `${itemCount} items have been removed from your cart`
+          )
+        }
       },
       
       getTotalItems: () => {

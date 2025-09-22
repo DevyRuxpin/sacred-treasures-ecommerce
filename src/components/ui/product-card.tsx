@@ -41,6 +41,8 @@ export function ProductCard({ product }: ProductCardProps) {
         name: product.name,
         image: product.images[0],
       })
+    } catch (error) {
+      console.error("Error adding to cart:", error)
     } finally {
       setIsLoading(false)
     }

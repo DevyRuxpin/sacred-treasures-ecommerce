@@ -63,7 +63,8 @@ async function getSimilarProducts(productId: string | null) {
       isActive: true,
       OR: [
         { categoryId: product.categoryId },
-         { tags: { contains: product.tags } },
+        // For JSON fields, we'll search by category for now
+        // Tags matching can be enhanced later with proper JSON operations
       ],
     },
     include: {
@@ -270,7 +271,8 @@ async function getPersonalizedRecommendations(userId: string | null) {
       isActive: true,
       OR: [
         { categoryId: { in: Array.from(userCategories) } },
-         { tags: { contains: Array.from(userTags).join(',') } },
+        // For JSON fields, we'll search by category for now
+        // Tags matching can be enhanced later with proper JSON operations
       ],
     },
     include: {
