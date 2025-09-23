@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useCartStore } from "@/store/cart"
+import { WishlistButton } from "@/components/ui/wishlist-button"
 import { ShoppingCart, Heart, Star, Minus, Plus, Truck, Shield, RotateCcw } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -322,9 +323,19 @@ export default function ProductPage() {
               <ShoppingCart className="h-5 w-5 mr-2" />
               {isAddingToCart ? "Adding..." : "Add to Cart"}
             </Button>
-            <Button variant="outline" size="icon">
-              <Heart className="h-5 w-5" />
-            </Button>
+            <WishlistButton 
+              product={{
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: product.images[0],
+                slug: product.slug,
+                category: product.category
+              }}
+              variant="outline"
+              size="lg"
+              showText={false}
+            />
           </div>
 
           {/* Features */}

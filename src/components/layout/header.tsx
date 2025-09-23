@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
 import { ShoppingCart, User, Menu, Heart, Sparkles } from "lucide-react"
 import { useCartStore } from "@/store/cart"
+import { useWishlistStore } from "@/store/wishlist"
 import { AdvancedSearch } from "@/components/search/advanced-search"
 import { CartSidebar } from "@/components/cart/cart-sidebar"
 
 export function Header() {
   const getTotalItems = useCartStore((state) => state.getTotalItems)
+  const getWishlistItems = useWishlistStore((state) => state.getTotalItems)
   const [isCartOpen, setIsCartOpen] = useState(false)
 
   return (
@@ -65,10 +67,17 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center space-x-2 shrink-0">
-            <Button variant="ghost" size="icon" className="hidden sm:flex hover:bg-primary/10 hover:text-primary transition-colors duration-200">
-              <Icon>
-                <Heart className="h-4 w-4" />
-              </Icon>
+            <Button variant="ghost" size="icon" className="hidden sm:flex hover:bg-primary/10 hover:text-primary transition-colors duration-200 relative" asChild>
+              <Link href="/wishlist">
+                <Icon>
+                  <Heart className="h-4 w-4" />
+                </Icon>
+                {getWishlistItems() > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full gradient-primary text-primary-foreground text-xs flex items-center justify-center font-bold">
+                    {getWishlistItems()}
+                  </span>
+                )}
+              </Link>
             </Button>
             <Button variant="ghost" size="icon" className="hidden sm:flex hover:bg-primary/10 hover:text-primary transition-colors duration-200">
               <Icon>

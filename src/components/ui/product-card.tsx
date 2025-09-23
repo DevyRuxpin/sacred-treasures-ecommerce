@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useCartStore } from "@/store/cart"
+import { WishlistButton } from "@/components/ui/wishlist-button"
 import { ShoppingCart, Heart, Star, Eye } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -79,13 +80,17 @@ export function ProductCard({ product }: ProductCardProps) {
                 >
                   <ShoppingCart className="h-4 w-4 text-primary" />
                 </Button>
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-medium"
-                >
-                  <Heart className="h-4 w-4 text-primary" />
-                </Button>
+                <WishlistButton 
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.images[0],
+                    slug: product.slug,
+                    category: product.category
+                  }}
+                  variant="icon"
+                />
                 <Button
                   size="icon"
                   variant="secondary"
