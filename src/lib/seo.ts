@@ -286,3 +286,69 @@ export function generateWebsiteStructuredData() {
     }
   }
 }
+
+// Blog-specific SEO
+export function generateBlogMetadata(post: {
+  title: string
+  excerpt?: string
+  content: string
+  publishedAt?: string
+  author: { name: string }
+  tags: string[]
+  slug: string
+}): Metadata {
+  const title = `${post.title} - Sacred Treasures Blog`
+  const description = post.excerpt || post.content.slice(0, 155) + "..."
+  const url = `${defaultSEO.url}/blog/${post.slug}`
+
+  return generateMetadata({
+    title,
+    description,
+    keywords: post.tags,
+    url,
+    type: "article",
+    publishedTime: post.publishedAt,
+    author: post.author.name,
+  })
+}
+
+// Blog post structured data
+export function generateBlogPostStructuredData(post: {
+  id: string
+  title: string
+  excerpt?: string
+  content: string
+  featuredImage?: string
+  publishedAt?: string
+  author: { name: string }
+  tags: string[]
+  slug: string
+  readTime?: number
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${defaultSEO.url}/blog/${post.slug}`,
+    headline: post.title,
+    description: post.excerpt,
+    image: post.featuredImage ? [post.featuredImage] : undefined,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      "@type": "Person",
+      name: post.author.name
+    },
+    publisher: {
+      "@id": `${defaultSEO.url}#organization`
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${defaultSEO.url}/blog/${post.slug}`
+    },
+    keywords: post.tags.join(", "),
+    wordCount: post.content.split(/\s+/).length,
+    timeRequired: post.readTime ? `PT${post.readTime}M` : undefined,
+    articleBody: post.content,
+    url: `${defaultSEO.url}/blog/${post.slug}`
+  }
+}

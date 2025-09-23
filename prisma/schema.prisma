@@ -54,6 +54,7 @@ model User {
   orders   Order[]
   reviews  Review[]
   wishlist WishlistItem[]
+  blogPosts BlogPost[]
 }
 
 model VerificationToken {
@@ -273,6 +274,51 @@ model SyncHistory {
   startedAt         DateTime @default(now())
   completedAt       DateTime?
   createdAt         DateTime @default(now())
+}
+
+// Blog Models
+model BlogPost {
+  id              String      @id @default(cuid())
+  title           String
+  slug            String      @unique
+  excerpt         String?
+  content         String      // Markdown content
+  featuredImage   String?
+  isPublished     Boolean     @default(false)
+  isFeatured      Boolean     @default(false)
+  publishedAt     DateTime?
+  seoTitle        String?
+  seoDescription  String?
+  tags            Json        // Array of tags
+  category        String?
+  readTime        Int?        // Estimated read time in minutes
+  viewCount       Int         @default(0)
+  authorId        String
+  author          User        @relation(fields: [authorId], references: [id])
+  comments        BlogComment[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@index([category])
+  @@index([authorId])
+}
+
+model BlogComment {
+  id        String   @id @default(cuid())
+  content   String
+  isApproved Boolean @default(false)
+  authorName String
+  authorEmail String
+  authorWebsite String?
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId])
+  @@index([isApproved])
 }
 
 // Enums

@@ -1,9 +1,9 @@
 "use client"
 
-import { generateProductStructuredData, generateOrganizationStructuredData, generateBreadcrumbStructuredData, generateWebsiteStructuredData } from "@/lib/seo"
+import { generateProductStructuredData, generateOrganizationStructuredData, generateBreadcrumbStructuredData, generateWebsiteStructuredData, generateBlogPostStructuredData } from "@/lib/seo"
 
 interface StructuredDataProps {
-  type: "product" | "organization" | "breadcrumb" | "website"
+  type: "product" | "organization" | "breadcrumb" | "website" | "blog-post"
   data: any
 }
 
@@ -22,6 +22,9 @@ export function StructuredData({ type, data }: StructuredDataProps) {
       break
     case "website":
       structuredData = generateWebsiteStructuredData()
+      break
+    case "blog-post":
+      structuredData = generateBlogPostStructuredData(data)
       break
     default:
       return null
@@ -77,4 +80,24 @@ export function OrganizationStructuredData() {
 // Website structured data component
 export function WebsiteStructuredData() {
   return <StructuredData type="website" data={null} />
+}
+
+// Blog post structured data component
+interface BlogPostStructuredDataProps {
+  post: {
+    id: string
+    title: string
+    excerpt?: string
+    content: string
+    featuredImage?: string
+    publishedAt?: string
+    author: { name: string }
+    tags: string[]
+    slug: string
+    readTime?: number
+  }
+}
+
+export function BlogPostStructuredData({ post }: BlogPostStructuredDataProps) {
+  return <StructuredData type="blog-post" data={post} />
 }
