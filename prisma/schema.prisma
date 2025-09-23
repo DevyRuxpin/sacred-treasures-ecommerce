@@ -55,6 +55,9 @@ model User {
   reviews  Review[]
   wishlist WishlistItem[]
   blogPosts BlogPost[]
+  supportTickets SupportTicket[]
+  assignedTickets SupportTicket[] @relation("AssignedTickets")
+  supportMessages SupportMessage[]
 }
 
 model VerificationToken {
@@ -321,6 +324,68 @@ model BlogComment {
   @@index([isApproved])
 }
 
+// Customer Support Models
+model SupportTicket {
+  id              String          @id @default(cuid())
+  subject         String
+  description     String
+  status          TicketStatus    @default(OPEN)
+  priority        TicketPriority  @default(MEDIUM)
+  category        TicketCategory
+  userId          String?
+  user            User?           @relation(fields: [userId], references: [id])
+  assignedTo      String?
+  assignedUser    User?           @relation("AssignedTickets", fields: [assignedTo], references: [id])
+  attachments     Json?           // Array of file URLs
+  tags            Json?           // Array of tags
+  orderId         String?         // Related order ID
+  productId       String?         // Related product ID
+  messages        SupportMessage[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  closedAt        DateTime?
+
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([userId])
+  @@index([assignedTo])
+}
+
+model SupportMessage {
+  id          String        @id @default(cuid())
+  content     String
+  isFromUser  Boolean       @default(false)
+  attachments Json?         // Array of file URLs
+  ticketId    String
+  ticket      SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?         @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+
+  @@index([ticketId])
+  @@index([userId])
+}
+
+model FAQ {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  category    String
+  tags        Json     // Array of tags
+  isPublished Boolean  @default(true)
+  viewCount   Int      @default(0)
+  helpfulCount Int     @default(0)
+  notHelpfulCount Int  @default(0)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([order])
+}
+
 // Enums
 enum UserRole {
   CUSTOMER
@@ -344,4 +409,30 @@ enum PaymentStatus {
   FAILED
   REFUNDED
   PARTIALLY_REFUNDED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketCategory {
+  GENERAL_INQUIRY
+  ORDER_SUPPORT
+  PRODUCT_QUESTION
+  TECHNICAL_ISSUE
+  BILLING_QUESTION
+  RETURN_REQUEST
+  COMPLAINT
+  FEATURE_REQUEST
 }
