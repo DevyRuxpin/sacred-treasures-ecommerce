@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useCartStore } from "@/store/cart"
 import { WishlistButton } from "@/components/ui/wishlist-button"
+import { ProductImage } from "@/components/ui/lazy-image"
 import { ShoppingCart, Heart, Star, Eye } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 
 interface ProductCardProps {
@@ -58,15 +58,11 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="relative">
         <Link href={`/products/${product.slug}`}>
           <div className="aspect-square relative overflow-hidden">
-            <Image
+            <ProductImage
               src={product.images[0] || "/images/placeholder.jpg"}
               alt={product.name}
-              fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "https://via.placeholder.com/800x600/cccccc/666666?text=Image+Not+Available";
-              }}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             />
             
             {/* Overlay with actions - only show on hover */}

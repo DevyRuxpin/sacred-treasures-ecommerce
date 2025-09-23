@@ -12,6 +12,8 @@ import { ShoppingCart, Heart, Star, Minus, Plus, Truck, Shield, RotateCcw } from
 import Image from "next/image"
 import Link from "next/link"
 import { SimilarProducts, FrequentlyBoughtTogether } from "@/components/recommendations/recommendation-section"
+import { generateProductMetadata } from "@/lib/seo"
+import { ProductStructuredData, BreadcrumbStructuredData } from "@/components/seo/structured-data"
 
 interface Product {
   id: string
@@ -51,6 +53,25 @@ interface Product {
     }
     createdAt: string
   }>
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products/${params.slug}`)
+    const data = await response.json()
+    
+    if (data.success && data.data) {
+      return generateProductMetadata(data.data)
+    }
+  } catch (error) {
+    console.error('Error generating metadata:', error)
+  }
+  
+  return {
+    title: 'Product Not Found',
+    description: 'The requested product could not be found.'
+  }
 }
 
 export default function ProductPage() {
@@ -158,7 +179,36 @@ export default function ProductPage() {
     : Number(product.price)
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
+      {/* Structured Data */}
+      {product && (
+        <>
+          <ProductStructuredData 
+            product={{
+              id: product.id,
+              name: product.name,
+              description: product.description,
+              price: finalPrice,
+              images: product.images,
+              category: product.category,
+              slug: product.slug,
+              averageRating: product.averageRating,
+              reviewCount: product.reviewCount,
+              availability: product.quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+            }}
+          />
+          <BreadcrumbStructuredData 
+            items={[
+              { name: "Home", url: "/" },
+              { name: "Products", url: "/products" },
+              { name: product.category.name, url: `/categories/${product.category.slug}` },
+              { name: product.name, url: `/products/${product.slug}` }
+            ]}
+          />
+        </>
+      )}
+      
+      <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Product Images */}
         <div className="space-y-4">
@@ -482,5 +532,6 @@ export default function ProductPage() {
         <FrequentlyBoughtTogether productId={product.id} />
       </div>
     </div>
+    </>
   )
 }
