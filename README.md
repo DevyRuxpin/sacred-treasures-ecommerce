@@ -4,7 +4,8 @@ A full-stack e-commerce platform specializing in authentic religious artifacts a
 
 ## 🖼️ Homepage Screenshot
 
-![Sacred Treasures Homepage](./homepage-screenshot.png)
+![png (1)](https://github.com/user-attachments/assets/b46484bd-2020-44a3-b552-72cb3fba6359)
+
 *Professional e-commerce design with clean layout, amber/gold theme, and comprehensive product showcase*
 
 ## 🚀 Live Demo
