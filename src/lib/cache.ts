@@ -19,7 +19,7 @@ const CACHE_DURATIONS = {
 
 // Cached product queries
 export const getCachedProducts = unstable_cache(
-  async (filters: any) => {
+  async (filters: Record<string, unknown>) => {
     const { prisma } = await import("./prisma")
     
     const products = await prisma.product.findMany({
@@ -92,7 +92,7 @@ export const getCachedRecommendations = unstable_cache(
   async (type: string, productId?: string) => {
     const { prisma } = await import("./prisma")
     
-    let recommendations: any[] = []
+    let recommendations: Record<string, unknown>[] = []
     
     switch (type) {
       case "trending":
@@ -180,9 +180,9 @@ export async function invalidateReviewCache() {
 
 // Client-side cache utilities
 export class ClientCache {
-  private static cache = new Map<string, { data: any; timestamp: number; ttl: number }>()
+  private static cache = new Map<string, { data: unknown; timestamp: number; ttl: number }>()
 
-  static set(key: string, data: any, ttl: number = 300000) { // 5 minutes default
+  static set(key: string, data: unknown, ttl: number = 300000) { // 5 minutes default
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -190,7 +190,7 @@ export class ClientCache {
     })
   }
 
-  static get(key: string): any | null {
+  static get(key: string): unknown | null {
     const item = this.cache.get(key)
     if (!item) return null
 

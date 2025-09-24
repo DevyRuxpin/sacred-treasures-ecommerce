@@ -1,39 +1,19 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React from "react"
+import { LucideIcon } from "lucide-react"
 
-interface IconProps {
-  children: React.ReactNode
+interface IconProps extends React.SVGProps<SVGSVGElement> {
+  icon: LucideIcon
   className?: string
 }
 
-export function Icon({ children, className }: IconProps) {
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  // Only render icons on client side to avoid hydration mismatches
-  if (!isClient) {
-    return (
-      <span 
-        className={className} 
-        suppressHydrationWarning
-        data-icon-wrapper="server"
-      >
-        {/* Placeholder for SSR */}
-      </span>
-    )
-  }
-
+export function Icon({ icon: LucideIconComponent, className, ...props }: IconProps) {
   return (
-    <span 
+    <LucideIconComponent 
       className={className} 
-      suppressHydrationWarning
-      data-icon-wrapper="client"
-    >
-      {children}
-    </span>
+      suppressHydrationWarning 
+      {...props} 
+    />
   )
 }

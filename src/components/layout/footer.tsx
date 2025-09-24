@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { Icon } from "@/components/ui/icon"
 import { Facebook, Instagram, Twitter, Mail, Heart, Sparkles } from "lucide-react"
 
 export function Footer() {
@@ -11,9 +10,7 @@ export function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-3 mb-6">
               <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center shadow-medium">
-                <Icon>
-                  <Sparkles className="h-5 w-5 text-primary-foreground" />
-                </Icon>
+                <Sparkles className="h-5 w-5 text-white" suppressHydrationWarning />
               </div>
               <div>
                 <h3 className="font-bold text-lg text-gradient">Sacred Treasures</h3>
@@ -27,35 +24,27 @@ export function Footer() {
             <div className="flex space-x-4">
               <Link 
                 href="#" 
-                className="h-10 w-10 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-200 flex items-center justify-center hover:scale-110"
+                className="h-10 w-10 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white transition-all duration-200 flex items-center justify-center hover:scale-110"
               >
-                <Icon>
-                  <Facebook className="h-5 w-5" />
-                </Icon>
+                <Facebook className="h-5 w-5" suppressHydrationWarning />
               </Link>
               <Link 
                 href="#" 
-                className="h-10 w-10 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-200 flex items-center justify-center hover:scale-110"
+                className="h-10 w-10 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white transition-all duration-200 flex items-center justify-center hover:scale-110"
               >
-                <Icon>
-                  <Instagram className="h-5 w-5" />
-                </Icon>
+                <Instagram className="h-5 w-5" suppressHydrationWarning />
               </Link>
               <Link 
                 href="#" 
-                className="h-10 w-10 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-200 flex items-center justify-center hover:scale-110"
+                className="h-10 w-10 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white transition-all duration-200 flex items-center justify-center hover:scale-110"
               >
-                <Icon>
-                  <Twitter className="h-5 w-5" />
-                </Icon>
+                <Twitter className="h-5 w-5" suppressHydrationWarning />
               </Link>
               <Link 
                 href="#" 
-                className="h-10 w-10 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-200 flex items-center justify-center hover:scale-110"
+                className="h-10 w-10 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white transition-all duration-200 flex items-center justify-center hover:scale-110"
               >
-                <Icon>
-                  <Mail className="h-5 w-5" />
-                </Icon>
+                <Mail className="h-5 w-5" suppressHydrationWarning />
               </Link>
             </div>
           </div>
@@ -161,9 +150,7 @@ export function Footer() {
         <div className="border-t border-border/40 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 text-muted-foreground mb-4 md:mb-0">
-              <Icon>
-                <Heart className="h-4 w-4 text-primary" />
-              </Icon>
+              <Heart className="h-4 w-4 text-amber-600" suppressHydrationWarning />
               <span className="text-sm">
                 Made with devotion for the faithful community
               </span>

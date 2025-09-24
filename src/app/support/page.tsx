@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { FAQ } from "@/components/support/faq"
 import { LiveChat, ChatToggle } from "@/components/support/live-chat"
 import { 
@@ -15,10 +14,7 @@ import {
   Mail, 
   Clock, 
   FileText, 
-  Search,
-  Send,
-  User,
-  AlertCircle
+  Send
 } from "lucide-react"
 
 export default function SupportPage() {
@@ -92,7 +88,7 @@ export default function SupportPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Customer Support</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          We're here to help you with any questions or concerns about your Sacred Treasures experience.
+          We&apos;re here to help you with any questions or concerns about your Sacred Treasures experience.
         </p>
       </div>
 
@@ -120,7 +116,7 @@ export default function SupportPage() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
-              Send us an email and we'll respond within 24 hours
+              Send us an email and we&apos;ll respond within 24 hours
             </p>
             <Button variant="outline" className="w-full" asChild>
               <a href="mailto:support@sacredtreasures.com">
@@ -217,7 +213,7 @@ export default function SupportPage() {
           <CardHeader>
             <CardTitle>Send us a message</CardTitle>
             <p className="text-muted-foreground">
-              Fill out the form below and we'll get back to you as soon as possible.
+              Fill out the form below and we&apos;ll get back to you as soon as possible.
             </p>
           </CardHeader>
           <CardContent>
@@ -316,7 +312,7 @@ export default function SupportPage() {
               <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">No tickets yet</h3>
               <p className="text-muted-foreground mb-4">
-                You haven't created any support tickets yet.
+                You haven&apos;t created any support tickets yet.
               </p>
               <Button onClick={() => setActiveTab("contact")}>
                 Create a Ticket

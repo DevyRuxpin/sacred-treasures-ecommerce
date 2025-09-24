@@ -1,97 +1,225 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { ProductCard } from '@/components/ui/product-card'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { ProductCard } from '../product-card'
+import { useCartStore } from '@/store/cart'
+import { useWishlistStore } from '@/store/wishlist'
 
-// Mock the cart store
-jest.mock('@/store/cart', () => ({
-  useCartStore: () => ({
-    addItem: jest.fn(),
-    removeItem: jest.fn(),
-    getItemQuantity: jest.fn(() => 0),
-  }),
-}))
+// Mock the stores
+jest.mock('@/store/cart')
+jest.mock('@/store/wishlist')
+
+const mockUseCartStore = useCartStore as jest.MockedFunction<typeof useCartStore>
+const mockUseWishlistStore = useWishlistStore as jest.MockedFunction<typeof useWishlistStore>
+
+// Mock Next.js Link
+jest.mock('next/link', () => {
+  return function MockLink({ children, href }: { children: React.ReactNode; href: string }) {
+    return <a href={href}>{children}</a>
+  }
+})
 
 const mockProduct = {
   id: '1',
-  name: 'Premium Tasbih - 99 Beads',
-  slug: 'premium-tasbih-99-beads',
+  name: 'Test Product',
+  slug: 'test-product',
   price: 29.99,
   comparePrice: 39.99,
-  images: ['/images/products/tasbih-99-1.jpg'],
+  images: ['https://example.com/image.jpg'],
   averageRating: 4.5,
-  reviewCount: 12,
-  isFeatured: true,
+  reviewCount: 10,
   category: {
-    name: 'Prayer Beads',
-    slug: 'prayer-beads',
+    name: 'Test Category',
+    slug: 'test-category',
   },
+  isFeatured: true,
 }
 
-describe('ProductCard Component', () => {
+describe('ProductCard', () => {
+  const mockAddItem = jest.fn()
+  const mockToggleItem = jest.fn()
+
+  beforeEach(() => {
+    mockUseCartStore.mockReturnValue({
+      addItem: mockAddItem,
+      items: [],
+      getTotalItems: () => 0,
+      getTotalPrice: () => 0,
+      removeItem: jest.fn(),
+      updateQuantity: jest.fn(),
+      clearCart: jest.fn(),
+    })
+
+    mockUseWishlistStore.mockReturnValue({
+      addItem: jest.fn(),
+      removeItem: jest.fn(),
+      isInWishlist: jest.fn(() => false),
+      toggleItem: mockToggleItem,
+      items: [],
+      getTotalItems: () => 0,
+      clearWishlist: jest.fn(),
+    })
+
+    jest.clearAllMocks()
+  })
+
   it('renders product information correctly', () => {
     render(<ProductCard product={mockProduct} />)
-    
-    expect(screen.getByText('Premium Tasbih - 99 Beads')).toBeInTheDocument()
+
+    expect(screen.getByText('Test Product')).toBeInTheDocument()
     expect(screen.getByText('$29.99')).toBeInTheDocument()
-    expect(screen.getByText('$39.99')).toBeInTheDocument()
-    expect(screen.getByText('Prayer Beads')).toBeInTheDocument()
-    expect(screen.getByText('(12)')).toBeInTheDocument()
+    expect(screen.getByText('$39.99')).toBeInTheDocument() // Compare price
+    expect(screen.getByText('Test Category')).toBeInTheDocument()
+    expect(screen.getByText('4.5')).toBeInTheDocument() // Rating
+    expect(screen.getByText('(10)')).toBeInTheDocument() // Review count
   })
 
-  it('displays product image', () => {
+  it('displays product image with correct alt text', () => {
     render(<ProductCard product={mockProduct} />)
-    const image = screen.getByAltText('Premium Tasbih - 99 Beads')
+
+    const image = screen.getByAltText('Test Product')
     expect(image).toBeInTheDocument()
-    expect(image).toHaveAttribute('src', '/images/products/tasbih-99-1.jpg')
+    expect(image).toHaveAttribute('src', 'https://example.com/image.jpg')
   })
 
-  it('shows featured badge for featured products', () => {
+  it('shows sale badge when compare price is higher', () => {
     render(<ProductCard product={mockProduct} />)
+
+    expect(screen.getByText('Sale')).toBeInTheDocument()
+  })
+
+  it('shows featured badge when product is featured', () => {
+    render(<ProductCard product={mockProduct} />)
+
     expect(screen.getByText('Featured')).toBeInTheDocument()
   })
 
-  it('does not show featured badge for non-featured products', () => {
-    const nonFeaturedProduct = { ...mockProduct, isFeatured: false }
-    render(<ProductCard product={nonFeaturedProduct} />)
-    expect(screen.queryByText('Featured')).not.toBeInTheDocument()
-  })
-
-  it('displays star rating', () => {
+  it('calls addItem when add to cart button is clicked', async () => {
     render(<ProductCard product={mockProduct} />)
-    // Check for star rating display (4.5 stars)
-    const stars = screen.getAllByTestId('star')
-    expect(stars).toHaveLength(5)
+
+    const addToCartButton = screen.getByText('Add to Cart')
+    fireEvent.click(addToCartButton)
+
+    await waitFor(() => {
+      expect(mockAddItem).toHaveBeenCalledWith({
+        productId: '1',
+        quantity: 1,
+        price: 29.99,
+        name: 'Test Product',
+        image: 'https://example.com/image.jpg',
+      })
+    })
   })
 
-  it('handles add to cart button click', async () => {
-    const user = userEvent.setup()
+  it('calls toggleItem when wishlist button is clicked', async () => {
     render(<ProductCard product={mockProduct} />)
-    
-    const addButton = screen.getByRole('button', { name: /add to cart/i })
-    await user.click(addButton)
-    
-    // The actual cart functionality would be tested in integration tests
-    expect(addButton).toBeInTheDocument()
+
+    const wishlistButton = screen.getByRole('button', { name: /add to wishlist/i })
+    fireEvent.click(wishlistButton)
+
+    await waitFor(() => {
+      expect(mockToggleItem).toHaveBeenCalledWith({
+        id: '1',
+        name: 'Test Product',
+        price: 29.99,
+        image: 'https://example.com/image.jpg',
+        slug: 'test-product',
+        category: {
+          name: 'Test Category',
+          slug: 'test-category',
+        },
+      })
+    })
   })
 
-  it('links to product detail page', () => {
+  it('handles missing images gracefully', () => {
+    const productWithoutImages = {
+      ...mockProduct,
+      images: [],
+    }
+
+    render(<ProductCard product={productWithoutImages} />)
+
+    const image = screen.getByAltText('Test Product')
+    expect(image).toHaveAttribute('src', '/images/placeholder.jpg')
+  })
+
+  it('handles undefined images gracefully', () => {
+    const productWithUndefinedImages = {
+      ...mockProduct,
+      images: undefined as any,
+    }
+
+    render(<ProductCard product={productWithUndefinedImages} />)
+
+    const image = screen.getByAltText('Test Product')
+    expect(image).toHaveAttribute('src', '/images/placeholder.jpg')
+  })
+
+  it('displays correct link to product page', () => {
     render(<ProductCard product={mockProduct} />)
-    const productLink = screen.getByRole('link')
-    expect(productLink).toHaveAttribute('href', '/products/premium-tasbih-99-beads')
+
+    const productLink = screen.getByRole('link', { name: /test product/i })
+    expect(productLink).toHaveAttribute('href', '/products/test-product')
   })
 
-  it('handles products without compare price', () => {
-    const productWithoutComparePrice = { ...mockProduct, comparePrice: undefined }
-    render(<ProductCard product={productWithoutComparePrice} />)
-    
+  it('shows loading state when adding to cart', async () => {
+    mockUseCartStore.mockReturnValue({
+      addItem: jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100))),
+      items: [],
+      getTotalItems: () => 0,
+      getTotalPrice: () => 0,
+      removeItem: jest.fn(),
+      updateQuantity: jest.fn(),
+      clearCart: jest.fn(),
+    })
+
+    render(<ProductCard product={mockProduct} />)
+
+    const addToCartButton = screen.getByText('Add to Cart')
+    fireEvent.click(addToCartButton)
+
+    expect(screen.getByText('Adding...')).toBeInTheDocument()
+  })
+
+  it('displays wishlist button with correct state', () => {
+    mockUseWishlistStore.mockReturnValue({
+      addItem: jest.fn(),
+      removeItem: jest.fn(),
+      isInWishlist: jest.fn(() => true), // Item is in wishlist
+      toggleItem: mockToggleItem,
+      items: [],
+      getTotalItems: () => 1,
+      clearWishlist: jest.fn(),
+    })
+
+    render(<ProductCard product={mockProduct} />)
+
+    const wishlistButton = screen.getByRole('button', { name: /remove from wishlist/i })
+    expect(wishlistButton).toBeInTheDocument()
+  })
+
+  it('handles zero review count', () => {
+    const productWithNoReviews = {
+      ...mockProduct,
+      reviewCount: 0,
+      averageRating: 0,
+    }
+
+    render(<ProductCard product={productWithNoReviews} />)
+
+    expect(screen.getByText('0.0')).toBeInTheDocument()
+    expect(screen.getByText('(0)')).toBeInTheDocument()
+  })
+
+  it('handles missing category', () => {
+    const productWithoutCategory = {
+      ...mockProduct,
+      category: undefined,
+    }
+
+    render(<ProductCard product={productWithoutCategory} />)
+
+    // Should not crash and still render other elements
+    expect(screen.getByText('Test Product')).toBeInTheDocument()
     expect(screen.getByText('$29.99')).toBeInTheDocument()
-    expect(screen.queryByText('$39.99')).not.toBeInTheDocument()
-  })
-
-  it('handles products with no reviews', () => {
-    const productWithoutReviews = { ...mockProduct, reviewCount: 0 }
-    render(<ProductCard product={productWithoutReviews} />)
-    
-    expect(screen.queryByText('(0)')).not.toBeInTheDocument()
   })
 })

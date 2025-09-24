@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const published = searchParams.get("published") !== "false"
 
     // Build where clause
-    const where: any = {}
+    const where: Record<string, unknown> = {}
     
     if (published) {
       where.isPublished = true

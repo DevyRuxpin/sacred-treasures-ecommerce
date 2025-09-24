@@ -145,7 +145,7 @@ export class ContentManager {
       } = options
 
       // Build where clause
-      const where: any = {}
+      const where: Record<string, unknown> = {}
       
       if (published) {
         where.isPublished = true

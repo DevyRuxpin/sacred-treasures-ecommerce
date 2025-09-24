@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useCartStore } from "@/store/cart"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ShoppingCart, X, Minus, Plus, Trash2, ArrowRight } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 
 interface CartSidebarProps {
   isOpen: boolean
@@ -14,6 +14,7 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
+  const router = useRouter()
   const { items, updateQuantity, removeItem, getTotalItems, getTotalPrice } = useCartStore()
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
 
@@ -29,6 +30,11 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     } finally {
       setIsUpdating(null)
     }
+  }
+
+  const handleNavigation = (path: string) => {
+    onClose()
+    router.push(path)
   }
 
   const subtotal = getTotalPrice()
@@ -54,14 +60,14 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <div className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-5 w-5" suppressHydrationWarning />
               <h2 className="text-lg font-semibold">Shopping Cart</h2>
               {getTotalItems() > 0 && (
                 <Badge variant="secondary">{getTotalItems()} items</Badge>
               )}
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-4 w-4" />
+                <X className="h-4 w-4" suppressHydrationWarning />
             </Button>
           </div>
 
@@ -69,13 +75,13 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           <div className="flex-1 overflow-y-auto p-4">
             {items.length === 0 ? (
               <div className="text-center py-8">
-                <ShoppingCart className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <ShoppingCart className="h-16 w-16 mx-auto text-muted-foreground mb-4" suppressHydrationWarning />
                 <h3 className="text-lg font-medium mb-2">Your cart is empty</h3>
                 <p className="text-muted-foreground mb-4">
-                  Looks like you haven't added any items yet.
+                  Looks like you haven&apos;t added any items yet.
                 </p>
-                <Button onClick={onClose} asChild>
-                  <Link href="/products">Start Shopping</Link>
+                <Button onClick={() => handleNavigation("/products")}>
+                  Start Shopping
                 </Button>
               </div>
             ) : (
@@ -109,7 +115,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                             disabled={isUpdating === item.id}
                           >
-                            <Minus className="h-3 w-3" />
+                            <Minus className="h-3 w-3" suppressHydrationWarning />
                           </Button>
                           <span className="text-sm font-medium w-6 text-center">
                             {item.quantity}
@@ -121,7 +127,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                             disabled={isUpdating === item.id}
                           >
-                            <Plus className="h-3 w-3" />
+                            <Plus className="h-3 w-3" suppressHydrationWarning />
                           </Button>
                         </div>
                       </div>
@@ -136,7 +142,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                           className="h-6 w-6 text-destructive hover:text-destructive"
                           onClick={() => removeItem(item.id)}
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-3 w-3" suppressHydrationWarning />
                         </Button>
                       </div>
                     </div>
@@ -179,16 +185,12 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               
               {/* Action Buttons */}
               <div className="space-y-2">
-                <Button className="w-full" asChild>
-                  <Link href="/cart" onClick={onClose}>
-                    View Cart
-                  </Link>
+                <Button className="w-full" onClick={() => handleNavigation("/cart")}>
+                  View Cart
                 </Button>
-                <Button className="w-full" variant="outline" asChild>
-                  <Link href="/checkout" onClick={onClose}>
-                    <ArrowRight className="h-4 w-4 mr-2" />
-                    Checkout
-                  </Link>
+                <Button className="w-full" variant="outline" onClick={() => handleNavigation("/checkout")}>
+                  <ArrowRight className="h-4 w-4 mr-2" suppressHydrationWarning />
+                  Checkout
                 </Button>
               </div>
             </div>

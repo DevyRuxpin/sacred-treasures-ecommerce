@@ -4,11 +4,11 @@ import { generateProductStructuredData, generateOrganizationStructuredData, gene
 
 interface StructuredDataProps {
   type: "product" | "organization" | "breadcrumb" | "website" | "blog-post"
-  data: any
+  data: Record<string, unknown>
 }
 
 export function StructuredData({ type, data }: StructuredDataProps) {
-  let structuredData: any
+  let structuredData: Record<string, unknown>
 
   switch (type) {
     case "product":

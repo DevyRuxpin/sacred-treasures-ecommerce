@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Icon } from "@/components/ui/icon"
 import { Heart } from "lucide-react"
 import { useWishlistStore } from "@/store/wishlist"
 
@@ -68,15 +67,14 @@ export function WishlistButton({
         size="icon"
         onClick={handleToggle}
         disabled={isLoading}
-        className={`hover:bg-primary/10 hover:text-primary transition-colors duration-200 ${className}`}
+        className={`hover:bg-amber-50 hover:text-amber-600 transition-colors duration-200 ${className}`}
       >
-        <Icon>
-          <Heart 
-            className={`h-4 w-4 transition-colors duration-200 ${
-              inWishlist ? "fill-current text-red-500" : ""
-            }`} 
-          />
-        </Icon>
+        <Heart 
+          className={`h-4 w-4 transition-colors duration-200 ${
+            inWishlist ? "fill-current text-red-500" : ""
+          }`} 
+          suppressHydrationWarning
+        />
       </Button>
     )
   }
@@ -91,13 +89,12 @@ export function WishlistButton({
         inWishlist ? "bg-red-50 text-red-600 border-red-200 hover:bg-red-100" : ""
       } ${className}`}
     >
-      <Icon>
-        <Heart 
-          className={`h-4 w-4 mr-2 transition-colors duration-200 ${
-            inWishlist ? "fill-current text-red-500" : ""
-          }`} 
-        />
-      </Icon>
+      <Heart 
+        className={`h-4 w-4 mr-2 transition-colors duration-200 ${
+          inWishlist ? "fill-current text-red-500" : ""
+        }`} 
+        suppressHydrationWarning
+      />
       {showText && (
         <span>
           {isLoading 

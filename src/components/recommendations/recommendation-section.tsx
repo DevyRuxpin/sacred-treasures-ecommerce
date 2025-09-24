@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { ProductCard } from "@/components/ui/product-card"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Icon } from "@/components/ui/icon"
 import { Sparkles, TrendingUp, Users, Package } from "lucide-react"
 import Link from "next/link"
 
@@ -14,7 +13,7 @@ interface Product {
   slug: string
   price: number
   comparePrice?: number
-  images: string[]
+  images?: string[]
   averageRating: number
   reviewCount: number
   isFeatured?: boolean
@@ -138,7 +137,13 @@ export function RecommendationSection({
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={{
+                ...product,
+                images: product.images || ["/images/placeholder.jpg"]
+              }} 
+            />
           ))}
         </div>
       </CardContent>
@@ -154,7 +159,7 @@ export function SimilarProducts({ productId, maxItems = 4 }: { productId: string
       description="You might also like these items"
       type="similar"
       productId={productId}
-      icon={<Icon><Package className="h-5 w-5" /></Icon>}
+      icon={<Package className="h-5 w-5" suppressHydrationWarning />}
       maxItems={maxItems}
       showViewAll={false}
     />
@@ -168,7 +173,7 @@ export function FrequentlyBoughtTogether({ productId, maxItems = 4 }: { productI
       description="Customers who bought this item also purchased"
       type="frequently_bought_together"
       productId={productId}
-      icon={<Icon><Users className="h-5 w-5" /></Icon>}
+      icon={<Users className="h-5 w-5" suppressHydrationWarning />}
       maxItems={maxItems}
       showViewAll={false}
     />
@@ -181,7 +186,7 @@ export function TrendingProducts({ maxItems = 8 }: { maxItems?: number }) {
       title="Trending Now"
       description="Popular items this week"
       type="trending"
-      icon={<Icon><TrendingUp className="h-5 w-5" /></Icon>}
+      icon={<TrendingUp className="h-5 w-5" suppressHydrationWarning />}
       maxItems={maxItems}
       viewAllLink="/products?sortBy=popularity&sortOrder=desc"
     />
@@ -197,7 +202,7 @@ export function PersonalizedRecommendations({ userId, maxItems = 8 }: { userId?:
       description="Based on your purchase history"
       type="personalized"
       userId={userId}
-      icon={<Icon><Sparkles className="h-5 w-5" /></Icon>}
+      icon={<Sparkles className="h-5 w-5" suppressHydrationWarning />}
       maxItems={maxItems}
       viewAllLink="/products"
     />
@@ -211,7 +216,7 @@ export function CategoryRecommendations({ categoryId, maxItems = 8 }: { category
       description="Explore similar items"
       type="category"
       categoryId={categoryId}
-      icon={<Icon><Package className="h-5 w-5" /></Icon>}
+      icon={<Package className="h-5 w-5" suppressHydrationWarning />}
       maxItems={maxItems}
       showViewAll={false}
     />
@@ -224,7 +229,7 @@ export function FeaturedProducts({ maxItems = 8 }: { maxItems?: number }) {
       title="Featured Products"
       description="Handpicked items for you"
       type="featured"
-      icon={<Icon><Sparkles className="h-5 w-5" /></Icon>}
+      icon={<Sparkles className="h-5 w-5" suppressHydrationWarning />}
       maxItems={maxItems}
       viewAllLink="/products?featured=true"
     />
